@@ -49,7 +49,9 @@ export async function createMicrogrids(map, campus, container, { getTime, onChan
   const bIndex = new Map(map.campusBuildings.map((b, i) => [b.id, i]));
   const cache = new Map();
   let mode = 'idle', active = null, hoverPid = null;
-  const opts = { grid: 'outage', flex: 'flex', ev: 'noev' };
+  // a new microgrid starts grid-connected; the outage is something the presenter
+  // triggers (dashboard switch, or the console's "The grid just failed at 13:00")
+  const opts = { grid: 'normal', flex: 'flex', ev: 'noev' };
 
   // ======================= pick mode =======================
   const pickGroup = new THREE.Group();
@@ -102,7 +104,8 @@ export async function createMicrogrids(map, campus, container, { getTime, onChan
     refresh();
     onChange?.();
   }
-  async function create(pid) {
+  async function create(pid, overrides = {}) {
+    Object.assign(opts, overrides);
     if (active?.d.id === pid) return;
     if (active) remove();
     cancelPick();

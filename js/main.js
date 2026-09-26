@@ -165,7 +165,7 @@ map.canvas.addEventListener('pointerup', e => {
   if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;   // was a pan
   if (mg.mode === 'pick') {
     const pid = mg.pickAt(e.clientX, e.clientY);
-    if (pid) mg.create(pid);
+    if (pid) mg.create(pid, { grid: 'normal', flex: 'flex', ev: 'noev' });   // always start connected
     return;
   }
   const si = stations.pick(e.clientX, e.clientY);
