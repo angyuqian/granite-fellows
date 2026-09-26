@@ -5,9 +5,10 @@
 // and fall. Any input stops it where it is. Camera only: time, scenario and
 // pop-ups are untouched. Toggle with the orbit button or O; remembered.
 //
-// Attract mode (A key, or #attract=1): orbit at once and play the day on a slow
-// loop, alternating the clear and cloudy days. For the laptop on the table
-// before the pitch. Any input ends it.
+// Attract mode (A key, #attract=1, or automatically on the public site): orbit at
+// once and play the day on a slow loop, alternating the demo and cloudy days, with
+// a hint on screen. A click, tap, scroll or key ends it (not mere mouse movement,
+// so a visitor's drifting cursor doesn't), and the clock jumps to a set start.
 
 const IDLE_MS = 15000;
 const TURN_S = 240;           // one full orbit every 4 minutes
@@ -19,12 +20,13 @@ const BREATHE_S = 40;         // one rise-and-fall cycle
 const ATTRACT_STEP_MS = 450;  // one 15-min step; a day in ~43 s
 const KEY = 'mgo.orbit';
 
-export function createIdle(map, { getTime, setTime, days }) {
+export function createIdle(map, { getTime, setTime, days, onAttractEnd }) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let enabled = !reduced;
   try { if (localStorage.getItem(KEY) === 'off') enabled = false; } catch {}
 
   const btn = document.getElementById('orbit-btn');
+  const hint = document.getElementById('attract-hint');
   let lastInput = performance.now();
   let speed = 0, phase = 0, lastNow = performance.now(), prevLift = 0;
   let attract = 0;              // interval id while attract mode runs
@@ -33,9 +35,16 @@ export function createIdle(map, { getTime, setTime, days }) {
     speed = 0;
     prevLift = 0;
     phase = 0;
-    if (attract) { clearInterval(attract); attract = 0; btn.classList.remove('attract'); }
+    if (attract) {
+      clearInterval(attract);
+      attract = 0;
+      btn.classList.remove('attract');
+      hint.hidden = true;
+      onAttractEnd?.();
+    }
   }
-  function onInput() {
+  function onInput(e) {
+    if (attract && e.type === 'pointermove') return;
     lastInput = performance.now();
     if (speed > 0 || attract) stop();
   }
@@ -81,6 +90,7 @@ export function createIdle(map, { getTime, setTime, days }) {
     stop();
     if (map.mode !== '3d') document.querySelector('[data-view="3d"]')?.click();
     btn.classList.add('attract');
+    hint.hidden = false;
     // the click and key that started it must not count as "input" that ends it
     setTimeout(() => {
       attract = setInterval(() => {

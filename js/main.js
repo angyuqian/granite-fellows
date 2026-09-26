@@ -193,9 +193,10 @@ $('#mg-btn').addEventListener('click', () => {
 });
 
 // ---------------- time: day + step drive every time-varying layer ----------------
-const DAYS = Object.keys(weather.days);                        // ['clear', 'cloudy']
-const DAY_LABEL = { clear: 'Hot clear', cloudy: 'Cloudy' };
-const state = { day: DAYS[0], step: 56 };                        // 14:00
+const DAYS = Object.keys(weather.days);                        // ['demo', 'cloudy']
+const DAY_LABEL = { demo: 'Demo day', cloudy: 'Cloudy' };
+const START_STEP = 52;                                           // 13:00, when the outage begins
+const state = { day: DAYS[0], step: START_STEP };
 popup = createStationPopup(map, stations, weather, () => state, $('.map-wrap'));
 const hhmm = k => `${String(Math.floor(k / 4)).padStart(2, '0')}:${String((k % 4) * 15).padStart(2, '0')}`;
 const dateLabel = d => new Date(d + 'T00:00:00').toLocaleDateString('en-SG', { day: 'numeric', month: 'short' });
@@ -356,7 +357,8 @@ const concept = createConcept(q => assistant.ask(q));
 $('#info-btn').addEventListener('click', () => concept.open());
 
 // ---------------- ambient motion: idle orbit + attract mode ----------------
-const idle = createIdle(map, { getTime: () => state, setTime, days: DAYS });
+const idle = createIdle(map, { getTime: () => state, setTime, days: DAYS,
+  onAttractEnd: () => setTime(DAYS[0], START_STEP) });
 
 // deep links for rehearsal and screenshots:
 //   #2d  #station=WS06  #t=13:30  #day=cloudy  #focus=SDE4  #layer=sun  #wind=1
@@ -372,7 +374,10 @@ const idle = createIdle(map, { getTime: () => state, setTime, days: DAYS });
   setTime(day, t ? Math.min(95, +t[1] * 4 + Math.floor(+t[2] / 15)) : state.step);
   const si = stations.stations.findIndex(s => s.id === h.get('station'));
   if (si >= 0) popup.open(si);
-  if (h.get('attract') === '1') idle.startAttract();
+  // the public site greets visitors with attract mode, unless the link asks for a view;
+  // on localhost (the pitch laptop) it only starts on request
+  const publicSite = location.hostname.endsWith('github.io');
+  if (h.get('attract') === '1' || (publicSite && !location.hash)) idle.startAttract();
   if (h.get('concept')) concept.open(Math.max(0, +h.get('concept') - 1));
   if (h.get('ask')) await assistant.ask(h.get('ask'));
   if (h.get('mg')) await mg.create(h.get('mg'));
