@@ -3,7 +3,7 @@
 **One interface for every energy asset — including the buildings.**
 
 Interactive demo for **Granite Fellows · ST Engineering Challenge Statement 2**.
-Live at https://angyuqian.github.io/microgrid-orchestrator/
+Live at https://angyuqian.github.io/granite-fellows/
 
 Solar, storage, a genset, the utility tie, buildings and an EV fleet publish themselves
 to one dispatcher as the same object. Shown on a 3D model of the NUS Kent Ridge campus
