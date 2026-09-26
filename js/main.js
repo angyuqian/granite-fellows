@@ -8,6 +8,7 @@ import { METRICS, compass } from './metrics.js';
 import { createMicrogrids } from './microgrid.js';
 import { createAssistant } from './assistant.js';
 import { createConcept } from './concept.js';
+import { createIdle } from './idle.js';
 
 const $ = sel => document.querySelector(sel);
 const fmt = n => n.toLocaleString('en-SG', { maximumFractionDigits: 0 });
@@ -354,6 +355,9 @@ const assistant = createAssistant({
 const concept = createConcept(q => assistant.ask(q));
 $('#info-btn').addEventListener('click', () => concept.open());
 
+// ---------------- ambient motion: idle orbit + attract mode ----------------
+const idle = createIdle(map, { getTime: () => state, setTime, days: DAYS });
+
 // deep links for rehearsal and screenshots:
 //   #2d  #station=WS06  #t=13:30  #day=cloudy  #focus=SDE4  #layer=sun  #wind=1
 {
@@ -368,6 +372,7 @@ $('#info-btn').addEventListener('click', () => concept.open());
   setTime(day, t ? Math.min(95, +t[1] * 4 + Math.floor(+t[2] / 15)) : state.step);
   const si = stations.stations.findIndex(s => s.id === h.get('station'));
   if (si >= 0) popup.open(si);
+  if (h.get('attract') === '1') idle.startAttract();
   if (h.get('concept')) concept.open(Math.max(0, +h.get('concept') - 1));
   if (h.get('ask')) await assistant.ask(h.get('ask'));
   if (h.get('mg')) await mg.create(h.get('mg'));
