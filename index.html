@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microgrid Orchestrator</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+    "three": "./vendor/three.module.js",
+    "three/addons/": "./vendor/"
+} }
+</script>
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="program">
+      <span class="granite-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 195 31" fill="currentColor" role="img" aria-label="Granite Asia"><path d="m99.1 27.9c-1.9 0-3-1.2-3-3.4v-15.1h6.4l.4-.9h-6.7v-6.7l-4.2 6.6h-2.1v.9h2.1v15.4c0 3.6 1.7 5.2 4.8 5.2 2.2 0 4.7-1.4 6.6-3.8l-.2-.2c-1.2 1.1-2.7 2-4.1 2z"></path><path d="m120.1 24.5c-1.3 1.8-3.4 3.2-6 3.2-4.4 0-6.4-4.3-6.4-10.1 0-.4 0-.5 0-.9h12.6c.2-5-2.5-8.4-7.3-8.4-5.4 0-9.7 4.8-9.7 11.2 0 5.8 3.2 10.6 8.7 10.6 4.3 0 6.8-2.8 8.2-5.4zm-7.3-15.7c2.8 0 3.8 2.7 3.5 6.9h-8.5c.4-3.7 2.1-6.9 5-6.9z"></path><path d="m86.8 7.8-6.4 3.2 2.3 1.6v15.3l-2.3 1.6h8.7l-2.3-1.6z"></path><path d="m84.4 5.2c1.4 0 2.6-1.2 2.6-2.6s-1.2-2.6-2.6-2.6-2.6 1.2-2.6 2.6c-.1 1.4 1.1 2.6 2.6 2.6z"></path><path d="m26.5 15.7h-11l3.4 2.4v7.6c0 2.3-2.1 3.7-5.3 3.7-5.7 0-8.7-6.3-8.7-14.3 0-8.1 3.4-14.4 8.6-14.4 4.3 0 9.3 6.8 9.3 6.8v-5.9c-1.3-.4-4.8-1.5-9.2-1.5-7.8-0-13.6 6.1-13.6 15s5.2 14.9 13.4 14.9c4.1 0 7.7-1.4 9.9-2.9v-9.1z"></path><path d="m77.2 27.9v-13.5c0-4-1.9-6.2-5.1-6.2-2.6 0-5.2 1.8-7.2 3.9v-4.3l-6.4 3.2 2.3 1.6v15.3l-2.3 1.6h8.7l-2.3-1.6v-15.4c1.5-1.1 3.3-1.7 4.7-1.7 2.8 0 3.5 2.1 3.5 4.8v12.3l-2.3 1.6h8.7z"></path><path d="m58.2 26.9c-.2.3-.8.9-1.6.9-1.2 0-1.3-1.3-1.3-2.9v-9.7c0-4.6-2.8-7-6.8-7-4.2 0-6.7 3.1-7.8 4.4l2.6 4.2s.3-8.1 4.8-8c1.5.1 3.1 1.5 3.1 5.1v3.2l-3.7 1c-5.1 1.4-7.1 4.8-7 7.6.1 2.5 1.9 4.2 4.6 4.2 2.3 0 4.6-1.4 6.2-3.4.1 1.5.6 3.4 2.8 3.4 2.1 0 3.6-1.7 4.2-2.9zm-10.6 1.1c-1.7 0-3-1.3-3-3.4 0-2.3 1-4.9 4.3-6.1l2.3-.8v8.6c-.9.8-2.3 1.7-3.6 1.7z"></path><path d="m33 12.6v-4.8l-6.5 3.2 2.3 1.6v15.3l-2.3 1.6h8.7l-2.2-1.6v-14.8c1-1.3 2.1-1.7 2.9-1.7 2 0 3.2 1.4 3.2 1.4l1-4.3c-3-.7-5.7 1.3-7.1 4.1z"></path><g fill="#828282"><path d="m132.7.1h-.3l-9.6 26.7-3.9 2.7h8.7l-4-2.8 2.6-7h8.9l2.8 7.9-3.1 2h10.3l-2.6-2.3zm-6.2 18.6 4.1-11.6 4.1 11.6z"></path><path d="m164.7 5.2c1.4 0 2.6-1.2 2.6-2.6s-1.1-2.6-2.6-2.6-2.6 1.2-2.6 2.6 1.2 2.6 2.6 2.6z"></path><path d="m167.2 7.8-6.4 3.2 2.3 1.6v15.3l-2.3 1.6h8.7l-2.3-1.6z"></path><path d="m154 17.2-1.5-.8c-1.8-1-3.6-2-3.6-4.2 0-2 1.5-3.4 3.7-3.4 2.6 0 5.9 4.9 5.9 4.9v-4.4c-1.5-.8-3.9-1.1-5.4-1.1-3.9 0-6.9 2.3-6.9 6 0 3.5 2.4 4.9 4.4 5.9l1.4.9c2.9 1.6 4.6 2.4 4.6 4.7 0 2.5-2 3.7-4.3 3.7-3.2 0-6.8-5.9-6.8-5.9l.3 5.2c1.5.7 3.8 1.2 5.8 1.2 4.5 0 7.6-2.5 7.6-6.4.2-3.6-2.5-4.9-5.2-6.3z"></path><path d="m188.1 26.9c-.2.3-.8.9-1.6.9-1.2 0-1.3-1.3-1.3-2.9v-9.7c0-4.6-2.8-7-6.8-7-4.2 0-6.7 3.1-7.8 4.4l2.6 4.2s.3-8.1 4.8-8c1.5.1 3.1 1.5 3.1 5.1v3.2l-3.7 1c-5.1 1.4-7.1 4.8-7 7.6.1 2.5 1.9 4.2 4.6 4.2 2.3 0 4.6-1.4 6.2-3.4.1 1.5.6 3.4 2.8 3.4 2.1 0 3.6-1.7 4.2-2.9zm-10.7 1.1c-1.7 0-3-1.3-3-3.4 0-2.3 1-4.9 4.3-6.1l2.3-.8v8.6c-.9.8-2.3 1.7-3.6 1.7z"></path></g></svg></span>
+      <span class="prog-rule" aria-hidden="true"></span>
+      <div class="prog-text">
+        <span class="prog-name">Granite Fellows</span>
+        <span class="prog-sub">ST Engineering · Challenge Statement 2</span>
+      </div>
+    </div>
+    <span class="topbar-div" aria-hidden="true"></span>
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <h1>Microgrid <span class="hl">Orchestrator</span></h1>
+      <span class="tagline">One interface for every energy asset — including the buildings.</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="info-btn" id="info-btn" title="How it works">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6.2v.1"/></svg>How it works
+      </button>
+      <button class="icon-btn" data-toggle="left"  title="Toggle console panel" aria-label="Toggle console panel">
+        <svg viewBox="0 0 20 20"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><line x1="7.5" y1="3.5" x2="7.5" y2="16.5"/></svg>
+      </button>
+      <button class="icon-btn" data-toggle="right" title="Toggle widgets panel" aria-label="Toggle widgets panel">
+        <svg viewBox="0 0 20 20"><rect x="2.5" y="3.5" width="15" height="13" rx="2"/><line x1="12.5" y1="3.5" x2="12.5" y2="16.5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ left: assistant (placeholder until the end) ============ -->
+  <aside class="panel left" id="panel-left">
+    <div class="resizer" data-side="left" title="Drag to resize · double-click to reset"></div>
+    <div class="panel-head">
+      <span class="panel-title">Operator console</span>
+      <span class="console-status"><i></i>dispatch engine</span>
+    </div>
+    <div class="chat" id="chat-log">
+      <div class="assistant-empty" id="assistant-empty">
+        <svg class="console-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M6.5 9.5l3 2.5-3 2.5M11.5 15h5"/></svg>
+        <p class="assistant-q">Operator queries</p>
+        <p class="assistant-sub">Query the campus, a precinct or a building, or run a scenario.</p>
+        <div class="chips">
+          <button class="chip c1" data-ask="Show me the campus">Show me the campus</button>
+          <button class="chip c2" data-ask="Create a microgrid for Engineering">Create a microgrid for Engineering</button>
+          <button class="chip c3" data-ask="The grid just failed at 13:00">The grid just failed at 13:00</button>
+          <button class="chip c4" data-ask="Which buildings can help at 15:00?">Which buildings can help at 15:00?</button>
+          <button class="chip c5" data-ask="What can SDE4 offer?">What can SDE4 offer?</button>
+          <button class="chip c6" data-ask="Register an EV fleet">Register an EV fleet</button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-suggest" id="chat-suggest">
+      <button data-ask="The grid just failed at 13:00">Grid fails at 13:00</button>
+      <button data-ask="What if the buildings weren't flexible?">Buildings not flexible?</button>
+      <button data-ask="Why is Science & Medicine different?">Why is Science different?</button>
+      <button data-ask="Register an EV fleet">Register EV fleet</button>
+      <button data-ask="Show me a cloudy day">Cloudy day</button>
+      <button data-ask="What happens below this layer?">Below this layer?</button>
+    </div>
+    <form class="composer" id="chat-form" autocomplete="off">
+      <input type="text" id="chat-input" placeholder="Query, e.g. What can MD6 offer?" aria-label="Query the orchestrator">
+      <button class="send" type="submit" aria-label="Send"><svg viewBox="0 0 20 20"><path d="M10 16V4M5 9l5-5 5 5"/></svg></button>
+    </form>
+    <p class="chat-foot">Results from the dispatch engine · 5 precincts · 2 weather days</p>
+  </aside>
+
+  <!-- ============ centre: map ============ -->
+  <main class="map-wrap">
+    <div id="map" class="map"></div>
+
+    <div class="map-ctrl top-right">
+      <button class="mg-btn" id="mg-btn"><span class="bolt">⚡</span><span id="mg-btn-text">Create microgrid</span></button>
+      <div class="seg" role="group" aria-label="View mode">
+        <button data-view="2d">2D</button>
+        <button data-view="3d" aria-pressed="true">3D</button>
+      </div>
+    </div>
+
+    <div class="map-ctrl bottom-right zoom">
+      <button data-zoom="in" aria-label="Zoom in">+</button>
+      <button data-zoom="reset" aria-label="Reset view" title="Reset view">
+        <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="6"/><path d="M10 1.5v4M10 14.5v4M1.5 10h4M14.5 10h4"/></svg>
+      </button>
+      <button data-zoom="out" aria-label="Zoom out">−</button>
+    </div>
+
+    <div class="legend map-ctrl top-left" id="legend">
+      <div class="legend-row">
+        <span class="legend-title">Building height</span>
+        <span class="legend-ramp ramp-height"></span>
+        <span class="legend-ticks"><span>0</span><span>5</span><span>20</span><span>45</span><span>80+ m</span></span>
+      </div>
+      <div class="legend-group">
+        <div class="legend-head">
+          <span class="legend-title"><i class="pin"></i>Weather pins</span>
+          <div class="seg mini" role="group" aria-label="Weather layer" id="metric-seg">
+            <button data-metric="temp" aria-pressed="true">Air temp</button>
+            <button data-metric="sun">Sunlight</button>
+            <button data-metric="feels">Feels like</button>
+          </div>
+        </div>
+        <div class="legend-row">
+          <span class="legend-title sub" id="lg-mlabel">Air temperature</span>
+          <span class="legend-ramp" id="lg-ramp"></span>
+          <span class="legend-ticks"><span id="lg-tlo">—</span><span id="lg-tmid"></span><span id="lg-thi">—</span></span>
+        </div>
+        <label class="legend-row single wind-row">
+          <span class="legend-title sub"><input type="checkbox" id="wind-toggle"> Wind arrows</span>
+          <span class="legend-note" id="wind-note">&nbsp;</span>
+        </label>
+      </div>
+      <div class="legend-row single">
+        <span class="legend-title"><i class="pv-swatch"></i>Rooftop PV</span>
+        <span class="legend-note">glows with sunlight at the nearest station</span>
+      </div>
+      <div class="legend-row single">
+        <span class="legend-title"><i class="ev-swatch"></i>EV charging</span>
+        <span class="legend-note">filled: fleet (synthetic) · outlined: public (documented)</span>
+      </div>
+      <div class="legend-row single">
+        <span class="legend-title"></span>
+        <span class="legend-note">click a weather pin for station data</span>
+      </div>
+    </div>
+
+    <div class="timeline map-ctrl bottom-center" id="timeline">
+      <div class="seg" role="group" aria-label="Weather day" id="day-seg"></div>
+      <button class="play" id="play" aria-label="Play day">
+        <svg class="i-play" viewBox="0 0 20 20"><path d="M6 4l10 6-10 6z"/></svg>
+        <svg class="i-pause" viewBox="0 0 20 20"><path d="M5.5 4h3v12h-3zM11.5 4h3v12h-3z"/></svg>
+      </button>
+      <div class="scrub-wrap">
+        <input type="range" id="scrub" min="0" max="95" step="1" value="56" aria-label="Time of day">
+        <div class="scrub-ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+      </div>
+      <span class="clock" id="clock">14:00</span>
+    </div>
+
+    <div class="mg-hint" id="mg-hint" hidden>Pick an area to turn into a microgrid <kbd>Esc</kbd> to cancel</div>
+    <div class="tooltip" id="tooltip" hidden></div>
+    <div class="attribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, ODbL</div>
+    <div class="loading" id="loading">Loading campus…</div>
+  </main>
+
+  <!-- ============ right: widgets ============ -->
+  <aside class="panel right" id="panel-right">
+    <div class="resizer" data-side="right" title="Drag to resize · double-click to reset"></div>
+    <div class="panel-head">
+      <span class="panel-title">Widgets</span>
+    </div>
+    <div class="widgets">
+      <section class="card mg-card" id="mg-card" hidden></section>
+      <section class="card">
+        <h2>Campus weather <span class="when" id="wx-when"></span></h2>
+        <div class="wx">
+          <div><span class="wx-v" id="wx-t">—</span><span class="wx-u">°C air</span></div>
+          <div><span class="wx-v" id="wx-feels">—</span><span class="wx-u">°C feels like</span></div>
+          <div><span class="wx-v" id="wx-rh">—</span><span class="wx-u">% RH</span></div>
+          <div><span class="wx-v" id="wx-ghi">—</span><span class="wx-u">W/m² sun</span></div>
+          <div><span class="wx-v" id="wx-wind">—</span><span class="wx-u" id="wx-dir">m/s wind</span></div>
+        </div>
+        <svg class="spark" id="wx-spark" viewBox="0 0 300 64" preserveAspectRatio="none" role="img" aria-label="Solar irradiance and air temperature through the day"></svg>
+        <div class="spark-key"><span><i class="k-ghi"></i>sunlight</span><span><i class="k-t"></i>air temp</span></div>
+        <p class="note" id="wx-note">&nbsp;</p>
+      </section>
+      <section class="card">
+        <h2>Rooftop solar</h2>
+        <p class="big"><span id="pv-kwp">—</span> <span class="big-u">MWp</span></p>
+        <p class="unit" id="pv-sub">&nbsp;</p>
+        <div class="pv-now"><span>Output now <span class="est">est.</span></span><b id="pv-now">—</b></div>
+        <p class="note">Programme total from <a id="pv-ref" target="_blank" rel="noopener">NUS News, 2024</a>.
+          Sites marked <i>documented</i> are named in NUS sources; the rest are assumed to match the total.</p>
+      </section>
+      <section class="card">
+        <h2>EV charging</h2>
+        <p class="big"><span id="ev-n">—</span> <span class="big-u">fleet chargers</span></p>
+        <p class="unit" id="ev-sub">&nbsp;</p>
+        <p class="note">Managed fleet, synthetic: the asset the dispatcher schedules. The car park is real (OSM); OCPP 1.6J is design only.</p>
+        <h3 class="sub-h">Public chargers on campus <span class="doc">documented</span></h3>
+        <ul class="ev-list" id="ev-pub"></ul>
+      </section>
+      <section class="card">
+        <h2>Campus buildings</h2>
+        <p class="big" id="w-count">—</p>
+        <p class="unit" id="w-count-sub">&nbsp;</p>
+      </section>
+      <section class="card">
+        <h2>Average building height</h2>
+        <p class="big" id="w-height">—</p>
+        <p class="unit">metres</p>
+      </section>
+      <section class="card">
+        <h2>Estimated floor area</h2>
+        <p class="big" id="w-gfa">—</p>
+        <p class="unit">m² · footprint × storeys</p>
+      </section>
+      <section class="card">
+        <h2>Building height histogram</h2>
+        <svg class="hist" id="w-hist" viewBox="0 0 300 120" preserveAspectRatio="none" role="img" aria-label="Histogram of campus building heights"></svg>
+        <div class="hist-axis"><span>0 m</span><span>40</span><span>80+</span></div>
+      </section>
+      <section class="card">
+        <h2>Height source</h2>
+        <div class="stack" id="w-src"></div>
+        <p class="note">Where OSM has no storey count, height is estimated from use type. Energy data on this map is synthetic.</p>
+      </section>
+    </div>
+  </aside>
+</div>
+
+
+<div class="concept-modal" id="concept" hidden role="dialog" aria-modal="true" aria-labelledby="concept-title">
+  <div class="concept-card">
+    <div class="concept-head">
+      <div><h2 id="concept-title">How it works</h2>
+        <span class="concept-sub">One interface for every energy asset, including the buildings</span></div>
+      <button class="popup-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="concept-body">
+      <div class="concept-diagram">
+        <div class="layer orch" data-layer="orch">
+          <div class="layer-label"><b>Orchestrator</b><span>dispatch engine · mixed-integer optimisation · every 15 min</span></div>
+          <div class="layer-chips"><span>minimise cost + carbon</span><span>hard limits never broken</span><span class="ok">0 asset-specific lines</span></div>
+        </div>
+        <div class="verify" data-layer="verify">↻ Verification: each building's physics is re-simulated on the dispatch actually chosen</div>
+        <div class="flow"><span>▲ capability offers</span><span>▼ setpoints</span></div>
+        <div class="layer cdm" data-layer="cdm">
+          <div class="layer-label"><b>Canonical data model</b><span>CapabilityOffer · one object shape for every asset</span></div>
+          <div class="prims"><span>bounds</span><span>ramp</span><span>storage</span><span>commitment</span><span class="key">recovery</span><span class="plain">+ prices · baseline</span></div>
+        </div>
+        <div class="flow"><span>▲ offers</span><span>▼ setpoints</span></div>
+        <div class="layer adapters" data-layer="adapters">
+          <div class="layer-label"><b>Resource adapters</b><span>one per resource type · each runs its own local model</span></div>
+          <div class="res-grid">
+            <div class="res" data-res="pv" style="--c:#f5b400"><b>Solar PV</b><i>bounds</i><small>SunSpec Modbus</small></div>
+            <div class="res" data-res="batt" style="--c:#22d3ee"><b>Battery</b><i>bounds · ramp · storage</i><small>SunSpec Modbus</small></div>
+            <div class="res" data-res="gen" style="--c:#f97316"><b>Genset</b><i>bounds · ramp · commitment</i><small>Modbus TCP</small></div>
+            <div class="res" data-res="grid" style="--c:#94a3b8"><b>Grid tie</b><i>bounds</i><small>utility meter</small></div>
+            <div class="res" data-res="bldg" style="--c:#9085e9"><b>Building</b><i>bounds · recovery</i><small>BACnet + thermal model</small></div>
+            <div class="res" data-res="ev" style="--c:#22c55e"><b>EV fleet</b><i>bounds · storage</i><small>OCPP 1.6J</small></div>
+          </div>
+        </div>
+        <div class="layer devices" data-layer="devices">
+          <div class="layer-label"><b>Field devices</b><span>inverters · battery systems · genset controller · meters · building management systems · chargers</span></div>
+        </div>
+        <div class="scope-line" data-layer="scope"><span>Below this line, local controllers own protection, grid-forming and the islanding transition (milliseconds to seconds)</span></div>
+      </div>
+      <div class="concept-side">
+        <div class="concept-text"></div>
+        <div class="concept-nav">
+          <button data-prev>Back</button>
+          <div class="concept-dots"></div>
+          <button data-next class="primary">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
